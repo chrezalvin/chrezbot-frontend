@@ -1,0 +1,29 @@
+.nav-link{
+    font-weight: bold !important;
+}
+
+@media screen and (max-width: 600px) {
+    #header{
+        min-height: 15vh !important;
+    }
+}
+@media screen and (min-width: 600px) {
+    #header{
+        height: 15vh !important;
+    }
+}
+
+#sideBarMenu{
+    position: sticky;
+    top: 15%;
+}
+
+.scrollbar-hidden {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.scrollbar-hidden::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
