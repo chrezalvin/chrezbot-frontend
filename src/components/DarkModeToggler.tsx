@@ -3,8 +3,8 @@ import { useAppSelector } from "../hooks/customRedux";
 import {toggle} from "../store/ToggleDarkMode";
 import { useEffect } from "react";
 
-import dark from "../darkMode.svg";
-import light from "../lightMode.svg";
+import dark from "../assets/icons/darkMode.svg";
+import light from "../assets/icons/lightMode.svg";
 
 function DarkModeToggler(){
     const darkMode = useAppSelector((state) => state.darkMode.value)

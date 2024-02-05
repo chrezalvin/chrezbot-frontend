@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect } from "react";
+import { Children, PropsWithChildren, useEffect } from "react";
 import { useAppSelector } from "../hooks/customRedux";
 
 import defaultAvatar from "../logo.svg";
@@ -97,7 +97,8 @@ function MenuWrapper(props: PropsWithChildren){
                     </aside>
                 </Col>
                 <Col sm md lg className="mx-2 py-2 overflow-scroll scrollbar-hidden" style={{height: "85vh"}} >
-                    <div className="d-flex justify-content-center my-2">
+                    {props.children}
+                    {/* <div className="d-flex justify-content-center my-2">
                         <img
                             id="sourDough"
                             src={sourDough}
@@ -115,7 +116,7 @@ function MenuWrapper(props: PropsWithChildren){
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                    </div>
+                    </div> */}
                 </Col>
             </Row>
             </Container>

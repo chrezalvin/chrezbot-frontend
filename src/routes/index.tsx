@@ -9,9 +9,11 @@ import ErrorPage from "./error";
 import Authenticate from "./Authenticate";
 import About from "./About";
 import Profile from "./Profile";
+import recommends from "./Recommends";
 import UnderConstruction from "./underConstruction";
 
 import MenuWrapper from "../components/MenuWrapper";
+import Recommends from "./Recommends";
 
 export interface RouteObjectWithContext{
     pathName: string;
@@ -64,6 +66,14 @@ export const routesApp: RouteObjectWithContext[] = [
             element: <MenuWrapper><About /></MenuWrapper>
         }
     },
+    {
+        pathName: "Recommends",
+        description: "Edit Recommendations from Chrez recommend",
+        routeObject:{
+            path: "/recommends",
+            element: <MenuWrapper><Recommends /></MenuWrapper>
+        }
+    }
 ]
 
 export const router = createBrowserRouter([...routesLanding, ...routesApp].map(route => route.routeObject));
