@@ -1,4 +1,0 @@
-{
-    "DISCORD_OAUTH_URL": "https://discord.com/api/oauth2/authorize?client_id=823688014786068500&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2FAuthenticate&response_type=code&scope=identify",
-    "API_BASE_URL": "http://localhost:3000"
-}

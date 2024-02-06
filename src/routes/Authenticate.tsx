@@ -6,7 +6,7 @@ import { assign } from "../store/User";
 import { useEffect, useState } from "react";
 
 import Cookies from "universal-cookie";
-import { getSessionKey, getUser} from "../functions/API";
+import { getSessionKey, getUser} from "../API/API";
 
 const cookies = new Cookies();
 
@@ -28,20 +28,21 @@ function Authenticate(){
 
         const getAPIResponse = async (code: string) => {
             try{
-            setLoading(true);
-    
-            const SESSION_KEY = await getSessionKey(code);
-            
-            cookies.set("SESSION_KEY", SESSION_KEY);
+                setLoading(true);
+        
+                const SESSION_KEY = await getSessionKey(code);
+                
+                cookies.set("SESSION_KEY", SESSION_KEY);
 
-            const userResponse = await getUser(cookies.get<string>("SESSION_KEY"));
-            console.log(userResponse);
+                console.log(`start to get user`);
+                const userResponse = await getUser(cookies.get<string>("SESSION_KEY"));
+                console.log(userResponse);
 
-            dispatch(assign({
-                ...userResponse
-            }))
-            console.log(user);
-            navigate("/");
+                dispatch(assign({
+                    ...userResponse
+                }))
+                console.log(user);
+                navigate("/");
             }
             catch(err: any){
                 setError("Failed to authenticate!");

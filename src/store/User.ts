@@ -1,7 +1,7 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import { RootState } from ".";
 
-import defaultLogo from "../logo.svg";
+import defaultLogo from "../assets/icons/logo.svg";
 
 export interface UserState{
     username: string;
