@@ -1,9 +1,9 @@
 import axios from "axios";
-import { API_BASE_URL } from "../config";
+import { BASE_URL } from "../config";
 
 export async function getSessionKey(code: string): Promise<string>{
     console.log(`Getting session key for code: ${code}`);
-    const res = await axios.get(`${API_BASE_URL}/authenticate`, {
+    const res = await axios.get(`${BASE_URL}/authenticate`, {
         params: {
             code
         }
@@ -35,7 +35,7 @@ export function APIUserDataTypeGuard(val: unknown): val is APIUserData{
 
 export async function getUser(sessionKey: string): Promise<APIUserData>{
     console.log(`Getting user data for session key: ${sessionKey}`);
-    const res = await axios.post(`${API_BASE_URL}/authenticate`, {
+    const res = await axios.post(`${BASE_URL}/authenticate`, {
                     SESSION_KEY: sessionKey
                 });
 
@@ -77,7 +77,7 @@ export function isRecommendDoc(obj: unknown): obj is RecommendDoc{
 }
 
 export async function getAllRecommends(): Promise<RecommendDoc[]>{
-    const res = await axios.get(`${API_BASE_URL}/recommend`);
+    const res = await axios.get(`${BASE_URL}/recommend`);
 
 
     if(res.status !== 200) return [];

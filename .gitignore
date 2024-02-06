@@ -25,4 +25,4 @@ yarn-error.log*
 config.json
 test.*
 
-output
+.env

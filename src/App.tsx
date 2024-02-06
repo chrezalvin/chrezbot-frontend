@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 
 function App() {
+  console.log(process.env);
   return (
     <Provider store={store}>
         <RouterProvider router={router} />

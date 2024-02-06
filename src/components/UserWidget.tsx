@@ -3,7 +3,7 @@ import sourDough from "../sourdough.jpg";
 
 import { UserState } from "../store/User";
 
-import logOutLogo from "../logOut.svg";
+import logOutLogo from "../assets/icons/logOut.svg";
 import userLogo from "../user.svg";
 import { useNavigate } from "react-router-dom";
 
@@ -43,14 +43,14 @@ function UserWidget(props: IProps){
                 >
                     <img 
                         src={userLogo} 
-                        className="text-warning" 
+                        className="text-warning"
                         width={30}
                         height={30}
                         alt=""
                     />{' '}
                     View Profile
                 </Dropdown.Item>
-                <Dropdown.Item 
+                <Dropdown.Item
                     href="#/action-2"
                     onClick={() => {
                         
@@ -63,7 +63,6 @@ function UserWidget(props: IProps){
                         height={30}
                         onClick={() => {
                             cookies.remove("SESSION_KEY");
-                            
                         }}
                         alt="" 
                     />{' '}

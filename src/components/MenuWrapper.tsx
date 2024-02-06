@@ -9,7 +9,7 @@ import sourDough from "../sourdough.jpg";
 import { Col, Container, Dropdown, Nav, NavDropdown, Navbar, Row } from "react-bootstrap";
 
 import "./MenuWrapper.css";
-import defaultLogo from "../logo.svg";
+import defaultLogo from "../assets/icons/logo.svg";
 import DarkModeToggler from "./DarkModeToggler";
 
 import UserWidget from "./UserWidget";

@@ -6,7 +6,7 @@ import { assign } from "../store/User";
 import { useEffect, useState } from "react";
 
 import Cookies from "universal-cookie";
-import { getSessionKey, getUser} from "../functions/API";
+import { getSessionKey, getUser} from "../API/API";
 
 const cookies = new Cookies();
 

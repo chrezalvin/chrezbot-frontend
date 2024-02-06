@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { assign } from "../store/User";
 import { useEffect, useState } from "react";
-import { getSessionKey, getUser } from "../functions/API";
+import { getSessionKey, getUser } from "../API/API";
 
 import Cookies from "universal-cookie";
 
