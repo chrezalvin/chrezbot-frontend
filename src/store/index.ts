@@ -3,6 +3,7 @@ import counterReducer from "./CounterSlice";
 import DarkModeReducer from "./ToggleDarkMode";
 import UserReducer from "./User";
 import SessionKeyReducer from "./SessionKey";
+import discordUserReducer from "./DiscordUser";
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         darkMode: DarkModeReducer,
         user: UserReducer,
         sessionKey: SessionKeyReducer,
+        discordUser: discordUserReducer
     }
 });
 

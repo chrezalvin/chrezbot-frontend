@@ -1,6 +1,11 @@
+import debug from "debug";
+
 import { useEffect, useState } from "react";
-import { Recommend, RecommendDoc, getAllRecommends } from "../API/API";
-import { Button, Card, Col, Container, Dropdown, DropdownButton, Form, InputGroup, Modal, ModalProps, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Dropdown, DropdownButton, Form, InputGroup, Modal, ModalProps, Row, Spinner } from "react-bootstrap";
+import { Recommend } from "../API/models";
+import { getAllRecommends } from "../API/service/RecommendService";
+
+const log = debug("app:Recommends");
 
 interface ConfirmDeleteModalProps extends ModalProps {
     recommend?: Recommend,
@@ -43,23 +48,27 @@ function ConfirmDeleteModal(
     );
 }
 
-function DisplayRecommend(recommend: RecommendDoc, onSelectDelete: (recommend: RecommendDoc) => void){
-    const title = recommend.data.title;
-    const description = recommend.data.description;
-    const id = recommend.id;
+function DisplayRecommend(recommend: Recommend, onSelectDelete: (recommend: Recommend) => void){
+    const title = recommend.title;
+    const description = recommend.description;
+    const id = recommend.recommend_id;
 
     return (
         <Card
             key={id}
             className="h-100 py-2 px-1"
         >
-            <Card.Img
-                variant="top"
-                src={recommend.data.imgUrl}
-                width={100}
-                height={180}
-                className="object-fit-contain"
-            />
+            {
+                recommend.imgUrl && (
+                    <Card.Img
+                        variant="top"
+                        src={recommend.imgUrl}
+                        width={100}
+                        height={180}
+                        className="object-fit-cover"
+                    />
+                )
+            }
             <Card.Body
                 className="p-2"
             >
@@ -94,31 +103,45 @@ function DisplayRecommend(recommend: RecommendDoc, onSelectDelete: (recommend: R
 }
 
 function Recommends(){
-    const [recommends, setRecommend] = useState<RecommendDoc[]>();
+    const [recommends, setRecommend] = useState<Recommend[]>();
     const [search, setSearch] = useState<string>("");
-    const [selectedDeleteRecommended, setSelectedDeleteRecommended] = useState<RecommendDoc>();
+    const [selectedDeleteRecommended, setSelectedDeleteRecommended] = useState<Recommend>();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     const allCategories: string[] = [];
 
-    if(recommends)
-        for(let rec of recommends){
-            if(rec.data.category)
-                rec.data.category.forEach((cat) => {
-                    const lowercasecat = cat.toLowerCase();
-                    if(!allCategories.includes(lowercasecat)){
-                        allCategories.push(lowercasecat);
-                    }
-                })
+    async function getRecommend(): Promise<void>{
+        setIsLoading(true);
+        setError(null);
+
+        try{
+            log("Getting all recommends");
+            
+            const recs = await getAllRecommends();
+            setRecommend(recs);
+
+            log("Sucessfully get all recommends");
         }
+        catch(e){
+            if(e instanceof Error)
+                setError(e.message);
+            else{
+                log(`Unknown error: ${e}`);
+                setError("An unknown error occurred");
+            }
+        }
+        finally{
+            setIsLoading(false);
+        }
+    }
 
     useEffect(() => {
-        getAllRecommends().then((recs) => {
-            setRecommend(recs);
-        });
+        getRecommend();
     }, [])
 
     const recommendDisplayList = recommends?.filter((rec) => {
-        return rec.data.title.toLowerCase().includes(search.toLowerCase()) || rec.data.description.toLowerCase().includes(search.toLowerCase());
+        return rec.title.toLowerCase().includes(search.toLowerCase()) || rec.description.toLowerCase().includes(search.toLowerCase());
     }).map(rec => {
         return (
             <Col lg={4}>
@@ -130,11 +153,11 @@ function Recommends(){
     return (
         <>
             <ConfirmDeleteModal
-                recommend={selectedDeleteRecommended?.data}
+                recommend={selectedDeleteRecommended}
                 show={selectedDeleteRecommended !== undefined}
                 onHide={() => setSelectedDeleteRecommended(undefined)}
             />
-            <Container fluid>
+            <Container className="w-100 h-100" fluid>
                 <Row>
                     <Col className="col-12 text-center">
                         <h1>Recommends</h1>
@@ -165,9 +188,21 @@ function Recommends(){
                         </InputGroup>
                     </Col>
                 </Row>
-                <Row className="g-3">
-                    {recommendDisplayList}
-                </Row>
+                {
+                    isLoading ?
+                    (
+                        <Container className="w-100 h-100 d-flex justify-content-center align-items-center" fluid>
+                            <Spinner />
+                        </Container>
+                    )
+                    :
+                    (
+                        <Row className="g-3">
+                            {recommendDisplayList}
+                        </Row>
+                    )
+                    
+                }
             </Container>
         </>
     )

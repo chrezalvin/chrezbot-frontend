@@ -1,12 +1,10 @@
-import { Children, PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useAppSelector } from "../hooks/customRedux";
 
-import defaultAvatar from "../logo.svg";
-import { useLocation, useNavigate } from "react-router-dom";
+import defaultAvatar from "../assets/icons/logo.svg";
+import { RouteObject, useLocation, useNavigate } from "react-router-dom";
 
-import {routesApp} from "../routes"
-import sourDough from "../sourdough.jpg";
-import { Col, Container, Dropdown, Nav, NavDropdown, Navbar, Row } from "react-bootstrap";
+import { Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 
 import "./MenuWrapper.css";
 import defaultLogo from "../assets/icons/logo.svg";
@@ -14,18 +12,30 @@ import DarkModeToggler from "./DarkModeToggler";
 
 import UserWidget from "./UserWidget";
 
-function MenuWrapper(props: PropsWithChildren){
+export interface RouteObjectWithContext{
+    pathName: string;
+    description: string;
+    routeObject: RouteObject;
+}
+
+interface MenuWrapperProps extends PropsWithChildren{
+    routeList: RouteObjectWithContext[];
+}
+
+function MenuWrapper(props: MenuWrapperProps){
     const user = useAppSelector(state => state.user);
+    const discordUser = useAppSelector(state => state.discordUser);
     const darkMode = useAppSelector(state => state.darkMode).value;
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-    if(user.username === "")
-        navigate("/authenticate");
-    });
+        console.log(props.routeList);
+        if(user === null)
+            navigate("/authenticate");
+    }, []);
 
-    const sidebarRoutesUI = routesApp.map(route => {
+    const sidebarRoutesUI = props.routeList.map(route => {
         return (
         <Nav.Item>
             <Nav.Link disabled={location.pathname === route.routeObject.path!} onClick={() => {
@@ -44,7 +54,7 @@ function MenuWrapper(props: PropsWithChildren){
         )
     });
 
-    const dropDownRoutesUI = routesApp.map(route => {
+    const dropDownRoutesUI = props.routeList.map(route => {
         return(
         <Nav.Link 
             disabled={location.pathname === route.routeObject.path!}
@@ -72,10 +82,19 @@ function MenuWrapper(props: PropsWithChildren){
                             </Nav>
                         </Navbar.Collapse>
                         <Navbar.Brand href="#" className="d-lg-block d-md-block d-sm-none">
-                            <UserWidget 
-                                {...user}
-                                darkMode={darkMode}
-                            />
+                            {
+                                !discordUser || user === null ? "Loading..." : (
+                                    <UserWidget
+                                        role={user.role} 
+                                        username={user.username}
+                                        avatar_url={discordUser.avatarURL ?? defaultAvatar}
+                                        aliases={user.aliases}
+                                        timezone={user.timezone}
+                                        user_id={user.user_id}
+                                        darkMode={darkMode}
+                                    />
+                                )
+                            }
                         </Navbar.Brand>
                     </Container>
                 </Navbar>
@@ -98,25 +117,6 @@ function MenuWrapper(props: PropsWithChildren){
                 </Col>
                 <Col sm md lg className="mx-2 py-2 overflow-scroll scrollbar-hidden" style={{height: "85vh"}} >
                     {props.children}
-                    {/* <div className="d-flex justify-content-center my-2">
-                        <img
-                            id="sourDough"
-                            src={sourDough}
-                            alt="SourDough"
-                        />
-                    </div>
-                    <div className="content">
-                        {props.children}
-                    </div>
-                    <div>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque architecto numquam fugiat, esse repellendus sequi ipsum laborum accusamus nulla blanditiis deleniti aspernatur, quasi facilis recusandae. Architecto dicta odit laudantium accusantium?</p>
-                    </div> */}
                 </Col>
             </Row>
             </Container>
