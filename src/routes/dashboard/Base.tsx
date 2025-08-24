@@ -1,5 +1,5 @@
 import debug from "debug";
-import { createActiveEvent, getActiveEvent, getAllActiveEvents, updateActiveEvent } from "../API/service/ActiveEventService";
+import { createActiveEvent, getActiveEvent, getAllActiveEvents, updateActiveEvent } from "../../API/service/ActiveEventService";
 import sourdough from "../sourdough.jpg";
 const log = debug("app:Base");
 
@@ -47,7 +47,7 @@ function Base(){
 
     return(
         <div>
-            <h1>Dashboard</h1>
+            <h1>Dashboar</h1>
             <button onClick={testing}>Test</button>
         </div>
     )

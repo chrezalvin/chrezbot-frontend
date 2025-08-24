@@ -13,6 +13,7 @@ const cookies = new Cookies();
 
 interface IProps extends UserState{
     darkMode: boolean;
+    avatar_url: string;
 }
 
 function UserWidget(props: IProps){
@@ -29,7 +30,7 @@ function UserWidget(props: IProps){
             >
                 {props.username}{' '}
                 <img
-                    src={props.avatarURL ?? sourDough}
+                    src={props.avatar_url ?? sourDough}
                     width="30"
                     height="30"
                     className="d-inline-block align-top rounded-circle"

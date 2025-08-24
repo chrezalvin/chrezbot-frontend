@@ -5,12 +5,18 @@ import { RouterProvider } from 'react-router-dom';
 
 import { Provider } from 'react-redux';
 import { store } from './store';
+import { useEffect, useMemo } from 'react';
+import { initializeLocalStorage } from './library/localStorage';
 
 function App() {
-  console.log(process.env);
+  useMemo(() => {
+    // initialize cookies
+    initializeLocalStorage();
+  }, []);
+
   return (
     <Provider store={store}>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </Provider>
   );
 }

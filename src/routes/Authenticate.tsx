@@ -1,102 +1,88 @@
+import debug from "debug";
+
 import { useAppSelector, useAppDispatch} from "../hooks/customRedux";
-import {DISCORD_OAUTH_URL} from "../config";
+import {API_CLIENT_ID, API_CLIENT_REDIRECT_URI} from "../config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { assign } from "../store/User";
+import { assignUser } from "../store/User";
 import { useEffect, useState } from "react";
 
-import Cookies from "universal-cookie";
-import { getSessionKey, getUser} from "../API/API";
+import { authenticate_user, get_session_credentials, getDiscordUser} from "../API";
+import { getItem, setItem } from "../library/localStorage";
+import { assignDiscordUser } from "../store/DiscordUser";
 
-const cookies = new Cookies();
+const log = debug("app:Authenticate");
 
 function Authenticate(){
     const user = useAppSelector((state) => state.user)
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [error, setError] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false);
+    const [searchParams, _] = useSearchParams();
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        // dispatch(assign({username:"Albert Einstein", discordID: "12345"}));
-        // navigate("/");
-        
-        if(user.username !== "") // means user already login
-            navigate("/");
+        async function authenticate(){
+            setIsLoading(true);
+            setError(null);
 
-
-        const getAPIResponse = async (code: string) => {
             try{
-                setLoading(true);
-        
-                const SESSION_KEY = await getSessionKey(code);
-                
-                cookies.set("SESSION_KEY", SESSION_KEY);
-
-                console.log(`start to get user`);
-                const userResponse = await getUser(cookies.get<string>("SESSION_KEY"));
-                console.log(userResponse);
-
-                dispatch(assign({
-                    ...userResponse
-                }))
-                console.log(user);
-                navigate("/");
-            }
-            catch(err: any){
-                setError("Failed to authenticate!");
-                setLoading(false);
-            }
-        }
-
-        const getUserFromAPI = async () => {
-            try{
-                const userResponse = await getUser(cookies.get<string>("SESSION_KEY"));
-                dispatch(assign({
-                    ...userResponse
-                }))
-                navigate("/");
-            }
-            catch(_: any){
                 const code = searchParams.get("code");
-                if(code !== null)
-                    await getAPIResponse(code);
-                else{
-                    setError("Cookie has been expired, touch the button to re authenticate");
-                    setLoading(false);
+                let SESSION_KEY = null;
+    
+                // null code check for SESSION_KEY cookie
+                if(code){
+                    SESSION_KEY = await authenticate_user(code);
+                    setItem("session_key", SESSION_KEY);
+
+                    log(`Got session key: ${SESSION_KEY}`);
                 }
+
+                SESSION_KEY = getItem("session_key");
+
+                if(SESSION_KEY){
+                    // then get credentials from SESSION_KEY
+                    const userResponse = await get_session_credentials();
+                    const discordProfile = await getDiscordUser();
+    
+                    log(`Got user data: ${JSON.stringify(userResponse)}`);
+    
+                    dispatch(assignUser(userResponse));
+                    dispatch(assignDiscordUser(discordProfile));
+    
+                    navigate("/dashboard");
+                }
+
+            }
+            catch(err){
+                if(err instanceof Error)
+                    setError(err.message);
+            }
+            finally{
+                setIsLoading(false);
             }
         }
 
-        const code = searchParams.get("code");
-        const cookie = cookies.get<string>("SESSION_KEY");
-
-        console.log(cookie);
-
-        if(cookie !== "")
-            getUserFromAPI();
-        else if(code !== null) 
-            getAPIResponse(code);
+        authenticate();
     }, [])
 
     function displayWaiting(){
-        if(error !== "") 
-            return {
-                color: "btn-outline-danger",
-                message: `${error}`
-            };
-
-        if(user.username !== "") 
-            return {
-                color: "btn-outline-success",
-                message: `Welcome, ${user.username}!`
-            };
-
-        if(searchParams.get("code") !== null)
+        if(isLoading)
             return {
                 color: "btn-outline-primary",
                 message: "Authenticating..."
+            };
+
+        if(error)
+            return {
+                color: "btn-outline-danger",
+                message: `error: ${error}`
+            };
+
+        if(user)
+            return {
+                color: "btn-outline-success",
+                message: `Welcome, ${user.username}!`
             };
         else
             return {
@@ -106,17 +92,17 @@ function Authenticate(){
     }
 
     return(
-        <body className="screen-center">
+        <div className="screen-center">
             <div className="display-flex flex-center text-center ">
                 <h1>Welcome to Chrezbot</h1>
                 <p>Authenticate your account first to login</p>
                 <a
                     className={`btn ${displayWaiting().color}`}
                     style={{borderWidth: "5px"}}
-                    href={loading ? undefined : DISCORD_OAUTH_URL}
+                    href={isLoading ? undefined : `https://discord.com/api/oauth2/authorize?client_id=${API_CLIENT_ID}&redirect_uri=${API_CLIENT_REDIRECT_URI}&response_type=code&scope=identify`}
                 >{displayWaiting().message}</a>
             </div>
-        </body>
+        </div>
     )
 }
 
