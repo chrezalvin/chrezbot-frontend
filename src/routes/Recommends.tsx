@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Dropdown, DropdownButton, Form, InputGroup, Modal, ModalProps, Row, Spinner } from "react-bootstrap";
 import { Recommend } from "../API/models";
 import { getAllRecommends } from "../API/service/RecommendService";
+import { useAppSelector } from "../hooks/customRedux";
 
 const log = debug("app:Recommends");
 
@@ -103,6 +104,7 @@ function DisplayRecommend(recommend: Recommend, onSelectDelete: (recommend: Reco
 }
 
 function Recommends(){
+    const user = useAppSelector(state => state.user);
     const [recommends, setRecommend] = useState<Recommend[]>();
     const [search, setSearch] = useState<string>("");
     const [selectedDeleteRecommended, setSelectedDeleteRecommended] = useState<Recommend>();
@@ -152,11 +154,15 @@ function Recommends(){
 
     return (
         <>
-            <ConfirmDeleteModal
-                recommend={selectedDeleteRecommended}
-                show={selectedDeleteRecommended !== undefined}
-                onHide={() => setSelectedDeleteRecommended(undefined)}
-            />
+            {
+                user === null ? (<></>) : (
+                    <ConfirmDeleteModal
+                        recommend={selectedDeleteRecommended}
+                        show={selectedDeleteRecommended !== undefined}
+                        onHide={() => setSelectedDeleteRecommended(undefined)}
+                    />
+                )
+            }
             <Container className="w-100 h-100" fluid>
                 <Row>
                     <Col className="col-12 text-center">

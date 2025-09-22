@@ -1,7 +1,8 @@
 {
   "name": "frontend",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
+  "proxy": "https://my.chrezbot.site",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
@@ -27,10 +28,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "set NODE_ENV=development && react-scripts build",
+    "start:production": "react-scripts build && serve -s build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "devstart": "set PORT=3001 &&react-scripts start"
+    "devstart": "set PORT=3001 &&react-scripts start",
+    "serve": "react-scripts build && serve -l 3001 -s build"
   },
   "eslintConfig": {
     "extends": [

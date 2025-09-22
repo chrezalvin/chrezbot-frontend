@@ -1,16 +1,18 @@
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useState } from "react";
 import { useAppSelector } from "../hooks/customRedux";
 
 import defaultAvatar from "../assets/icons/logo.svg";
 import { RouteObject, useLocation, useNavigate } from "react-router-dom";
 
-import { Col, Container, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Col, Container, Modal, Nav, Navbar, Row } from "react-bootstrap";
 
 import "./MenuWrapper.css";
 import defaultLogo from "../assets/icons/logo.svg";
 import DarkModeToggler from "./DarkModeToggler";
+import logOutLogo from "../assets/icons/logOut.svg";
 
 import UserWidget from "./UserWidget";
+import { API_CLIENT_ID, API_CLIENT_REDIRECT_URI } from "../config";
 
 export interface RouteObjectWithContext{
     pathName: string;
@@ -28,12 +30,7 @@ function MenuWrapper(props: MenuWrapperProps){
     const darkMode = useAppSelector(state => state.darkMode).value;
     const navigate = useNavigate();
     const location = useLocation();
-
-    useEffect(() => {
-        console.log(props.routeList);
-        if(user === null)
-            navigate("/authenticate");
-    }, []);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     const sidebarRoutesUI = props.routeList.map(route => {
         return (
@@ -56,19 +53,45 @@ function MenuWrapper(props: MenuWrapperProps){
 
     const dropDownRoutesUI = props.routeList.map(route => {
         return(
-        <Nav.Link 
-            disabled={location.pathname === route.routeObject.path!}
-            onClick={() => {
-                if(route.routeObject.path)
-                    navigate(route.routeObject.path);
-            }}
-        >{route.pathName}</Nav.Link>
+            <Nav.Link 
+                disabled={location.pathname === route.routeObject.path!}
+                onClick={() => {
+                    if(route.routeObject.path)
+                        navigate(route.routeObject.path);
+                }}
+            >{route.pathName}</Nav.Link>
         );
     })
 
     return(
         <div className={`vh-100 vw-100 ${darkMode ? "bg-dark text-light": "bg-light text-dark"}`} style={{boxSizing: "border-box"}}>
             <DarkModeToggler />
+            <Modal
+                size="lg"
+                show={isLoginModalOpen}
+                onHide={() => setIsLoginModalOpen(false)}
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Confirmation
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-dark">
+                    <p>
+                        Login to access Crystal Phoenix exclusive content or edit the contents
+                    </p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button 
+                        variant="success" 
+                        href={`https://discord.com/api/oauth2/authorize?client_id=${API_CLIENT_ID}&redirect_uri=${API_CLIENT_REDIRECT_URI}&response_type=code&scope=identify`}
+                    >
+                        Login
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <header id="header" style={{borderBlockEnd: `3px solid white`}}>
                 <Navbar collapseOnSelect expand="lg" variant={darkMode ? "dark": "light"} className="h-100 navbar-expand-md">
                     <Container className="p-0 my-2">
@@ -83,7 +106,19 @@ function MenuWrapper(props: MenuWrapperProps){
                         </Navbar.Collapse>
                         <Navbar.Brand href="#" className="d-lg-block d-md-block d-sm-none">
                             {
-                                !discordUser || user === null ? "Loading..." : (
+                                !discordUser || user === null ? (
+                                    <div onClick={() => setIsLoginModalOpen(true)} style={{cursor: "pointer"}}>
+                                        Log In
+                                        {' '}
+                                        <img 
+                                            src={logOutLogo} 
+                                            className="text-warning" 
+                                            width={30}
+                                            height={30}
+                                            alt="Log in to edit"
+                                        />
+                                    </div>
+                                ) : (
                                     <UserWidget
                                         role={user.role} 
                                         username={user.username}

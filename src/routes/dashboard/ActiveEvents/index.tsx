@@ -43,9 +43,6 @@ function ActiveEvents(){
     return (
         <>
             <Container className="position-relative" fluid>
-                <div className="position-absolute top-0 end-0">
-                    abcde
-                </div>
                 <Row className="position-relative">
                     <Col className="col-12 text-center">
                         <h1>Active Events</h1>
