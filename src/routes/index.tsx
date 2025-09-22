@@ -6,14 +6,14 @@ import {
 import Authenticate from "./Authenticate";
 import Profile from "./Profile";
 import NotFound from "./NotFound";
-import RedirectToAuth from "./RedirectToAuth";
+import RedirectToDashboard from "./RedirectToDashboard";
 import {routes} from "./dashboard";
 import MenuWrapper from "../components/MenuWrapper";
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <RedirectToAuth />
+        element: <RedirectToDashboard />
     },
     {
         path: "/profile",

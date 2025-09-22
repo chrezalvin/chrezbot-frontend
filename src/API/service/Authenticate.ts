@@ -1,6 +1,6 @@
 import debug from "debug";
 
-import { BASE_URL } from "../../config";
+import { API_CLIENT_REDIRECT_URI } from "../../config";
 import { isUser, User } from "../models";
 import { axiosInstance } from "../axiosConfig";
 import { isDiscordUser } from "../models/DiscordUser";
@@ -13,7 +13,7 @@ const log = debug("app:Authenticate");
  */
 export async function get_session_credentials(): Promise<User>{
     log(`Getting user data`);
-    const res = await axiosInstance.get(`${BASE_URL}/profile`);
+    const res = await axiosInstance.get("/profile");
 
     if(res.status === 400)
         throw new Error("Invalid Session ID");
@@ -31,9 +31,10 @@ export async function get_session_credentials(): Promise<User>{
  */
 export async function authenticate_user(code: string): Promise<string>{
     log(`Getting session key for code: ${code}`);
-    const res = await axiosInstance.get(`${BASE_URL}/authenticate`, {
+    const res = await axiosInstance.get("/authenticate", {
         params: {
-            code
+            code,
+            redirect_uri: API_CLIENT_REDIRECT_URI
         }
     });
 
@@ -52,7 +53,7 @@ export async function authenticate_user(code: string): Promise<string>{
  */
 export async function getDiscordUser(){
     log(`Getting discord user data`);
-    const res = await axiosInstance.get(`${BASE_URL}/profile/discord`);
+    const res = await axiosInstance.get("/profile/discord");
 
     if(res.status !== 200){
         log(`error: ${JSON.stringify(res.data)}`);

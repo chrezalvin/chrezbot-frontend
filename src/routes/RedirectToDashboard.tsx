@@ -1,18 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-function RedirectToAuth(){
+function RedirectToDashboard(){
     const navigate = useNavigate();
 
     useEffect(() => {
-        navigate("/authenticate");
+        navigate("/dashboard");
     }, [])
 
     return (
         <div>
-            Redirecting to authenticate, please wait...
+            Redirecting to dashboard, please wait...
         </div>
     );
 }
 
-export default RedirectToAuth;
+export default RedirectToDashboard;

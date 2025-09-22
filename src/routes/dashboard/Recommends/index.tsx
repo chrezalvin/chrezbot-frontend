@@ -9,10 +9,13 @@ import { RecommendCard } from "./RecommendsCard";
 import { AddRecommendModal } from "./AddRecommendModal";
 import admin from "../../../assets/icons/edit_mode.svg";
 import plus from "../../../assets/icons/plus.svg";
+import { useAppSelector } from "../../../hooks/customRedux";
 
 const log = debug("app:Recommends");
 
 function Recommends(){
+    const user = useAppSelector(state => state.user);
+
     const [recommends, setRecommend] = useState<Recommend[]>([]);
     const [search, setSearch] = useState<string>("");
     const [isCreatingRecommend, setIsCreatingRecommend] = useState<boolean>(false);
@@ -257,17 +260,21 @@ function Recommends(){
                 setShowPreview={setAddShowPreview}
             /> */}
             <Container className="m-0 w-100 h-100 position-relative" fluid>
-                <Button 
-                    variant={isEditMode ? "success" : "danger"}
-                    className="position-absolute top-0 start-0" 
-                    style={{height: "50px", width: "50px"}}
-                    onClick={() => {setIsEditMode(!isEditMode)}}
-                >
-                    <img 
-                        src={admin}
-                        className="w-100 h-100"
-                    />
-                </Button>
+                {
+                    user && (
+                        <Button 
+                            variant={isEditMode ? "success" : "danger"}
+                            className="position-absolute top-0 start-0" 
+                            style={{height: "50px", width: "50px"}}
+                            onClick={() => {setIsEditMode(!isEditMode)}}
+                        >
+                            <img 
+                                src={admin}
+                                className="w-100 h-100"
+                            />
+                        </Button>
+                    )
+                }
                 {
                     isEditMode && (
                     <Button 
